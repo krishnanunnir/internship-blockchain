@@ -22,18 +22,18 @@ App = {
   },
 
   initContract: function() {
-    $.getJSON("Production.json", function(election) {
+    $.getJSON("Production.json", function(production) {
       // Instantiate a new truffle contract from the artifact
-      App.contracts.Production = TruffleContract(election);
+      App.contracts.Production = TruffleContract(production);
       // Connect provider to interact with contract
-      App.contracts.Election.setProvider(App.web3Provider);
+      App.contracts.Production.setProvider(App.web3Provider);
 
       return App.render();
     });
   },
 
   render: function() {
-    var electionInstance;
+    var productionInstance;
     var loader = $("#loader");
     var content = $("#content");
 
@@ -49,24 +49,22 @@ App = {
     });
 
     // Load contract data
-    App.contracts.Election.deployed().then(function(instance) {
-      electionInstance = instance;
-      return electionInstance.candidatesCount();
-    }).then(function(candidatesCount) {
+    App.contracts.Production.deployed().then(function(instance) {
+      productionInstance = instance;
+      return productionInstance.producerCount();
+      }).then(function(producerCount) {
       var candidatesResults = $("#candidatesResults");
       candidatesResults.empty();
 
-      for (var i = 1; i <= candidatesCount; i++) {
-        electionInstance.candidates(i).then(function(candidate) {
-          var id = candidate[0];
-          var name = candidate[1];
-          var voteCount = candidate[2];
 
-          // Render candidate Result
-          var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
-          candidatesResults.append(candidateTemplate);
-        });
-      }
+    productionInstance.ownerToProducer(App.account).then(function(producer) {
+        var id = producer[0];
+        var name = producer[1];
+
+        // Render candidate Result
+        var candidateTemplate = "<tr><th>" + id + "</th><td>" + name +  "</td></tr>"
+        candidatesResults.append(candidateTemplate);
+    });
 
       loader.hide();
       content.show();
