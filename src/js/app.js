@@ -44,30 +44,34 @@ App = {
     web3.eth.getCoinbase(function(err, account) {
       if (err === null) {
         App.account = account;
-        $("#accountAddress").html("Your Account: " + account);
+        $("#accountAddress").html("Your Address: " + account);
       }
     });
 
     // Load contract data
     App.contracts.Production.deployed().then(function(instance) {
-      productionInstance = instance;
-      return productionInstance.producerCount();
-      }).then(function(producerCount) {
-      var candidatesResults = $("#candidatesResults");
-      candidatesResults.empty();
+      institutionInstance = instance;
+      return institutionInstance.insCount();
+  }).then(function(insCount) {
+      var namediv = $("#institutionName");
+      namediv.empty();
 
 
-    productionInstance.ownerToProducer(App.account).then(function(producer) {
-        var id = producer[0];
-        var name = producer[1];
+    institutionInstance.ownerToIns(App.account).then(function(institution) {
 
-        // Render candidate Result
-        var candidateTemplate = "<tr><th>" + id + "</th><td>" + name +  "</td></tr>"
-        candidatesResults.append(candidateTemplate);
+            var name = institution[1];
+            console.log(name);
+            if (name === "" ){
+                namediv.append("Sorry, your address doesn't have an account associated with it.");
+            }
+            else{
+                console.log(institution);
+                var institutionTemplate = name;
+                namediv.append(institutionTemplate);
+            }
     });
 
       loader.hide();
-      content.show();
     }).catch(function(error) {
       console.warn(error);
     });
