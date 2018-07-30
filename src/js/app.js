@@ -54,12 +54,14 @@ App = {
       return institutionInstance.insCount();
   }).then(function(insCount) {
       var namediv = $("#institutionName");
+      var itemdiv = $("#candidatesResults");
       namediv.empty();
+      itemdiv.empty();
 
 
     institutionInstance.ownerToIns(App.account).then(function(institution) {
 
-            var name = institution[1];
+            var name = institution[2];
             console.log(name);
             if (name === "" ){
                 namediv.append("Sorry, your address doesn't have an account associated with it.");
@@ -68,6 +70,16 @@ App = {
                 console.log(institution);
                 var institutionTemplate = name;
                 namediv.append(institutionTemplate);
+                institutionInstance.insToItems(App.account).then(function(item){
+                    console.log(item);
+                    $("#content").show();
+                    itemdiv.append("<tr><td>"+item[0]+"</td><td>"+item[1]+"</td>"+item[2]+"</td></tr>");
+
+                });
+                institutionInstance.producerToOrder(App.account).then(function(order){
+                    console.log(order);
+                    institutionInstance.idToItem(order)
+                });
             }
     });
 
