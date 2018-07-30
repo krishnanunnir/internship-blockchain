@@ -55,8 +55,10 @@ App = {
   }).then(function(insCount) {
       var namediv = $("#institutionName");
       var itemdiv = $("#candidatesResults");
+      var orderdiv = $("#orderValues");
       namediv.empty();
       itemdiv.empty();
+      orderdiv.empty();
 
 
     institutionInstance.ownerToIns(App.account).then(function(institution) {
@@ -71,14 +73,18 @@ App = {
                 var institutionTemplate = name;
                 namediv.append(institutionTemplate);
                 institutionInstance.insToItems(App.account).then(function(item){
-                    console.log(item);
+                    console.log("item" + item[2]);
                     $("#content").show();
-                    itemdiv.append("<tr><td>"+item[0]+"</td><td>"+item[1]+"</td>"+item[2]+"</td></tr>");
+                    itemdiv.append("<tr><td>"+item[0]+"</td><td>"+item[1]+"</td><td>"+item[2]+"</td></tr>");
 
                 });
                 institutionInstance.producerToOrder(App.account).then(function(order){
-                    console.log(order);
-                    institutionInstance.idToItem(order)
+
+                    itemId = order[1];
+                    institutionInstance.idToItem(itemId).then(function(item){
+                        orderdiv.append("<tr><td>"+order[0]+"</td><td>"+item[1]+"</td><td>"+order[2]+"</td><td><button type='button' class='btn btn-primary active' style='display:inline-block'>Track</button></td></tr>");
+                    });
+
                 });
             }
     });
