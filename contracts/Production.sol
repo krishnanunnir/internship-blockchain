@@ -47,11 +47,11 @@ contract Production{
     mapping (address => order) public producerToOrder;
     mapping (address => order) public sellerToOrder;
     //int to address corelation to perform tracking
-    mapping (uint => address) public currentlyWith;
-    mapping (uint => address) public nextLocAddress;
-    //We need mappings inorder to find the path from src to destId
-    mapping (uint => uint[]) srcToPaths;
-    mapping (uint => uint) pathLength;
+    mapping (uint => uint) public currentlyWithId;
+    mapping (uint => uint) public nextId;
+    mapping (uint => uint) public nextLocId;
+    //mapping all the pending delivery to their address they should arrive at and also the status which is a bool
+    mapping (address => uint) arrivedHere;
     //counters to store the equvalent id's
     uint public insCount;
     uint public itemCount;
@@ -84,7 +84,9 @@ contract Production{
         orderCount++;
         producerToOrder[tempAddress] = order(orderCount,_itemId,quantity,src,dest);
         idToOrder[orderCount] = producerToOrder[tempAddress];
-        currentlyWith[orderCount] = tempAddress;
+        arrivedHere[tempAddress] = orderCount;
+        currentlyWithId[orderCount] = src;
+        findNext(orderCount);
 
     }
 
@@ -96,9 +98,16 @@ contract Production{
     }
 
 
-    function addPath(uint _srcId,uint _destId,uint8[10] _path) private{
+    function addPath(uint orderId,uint _srcId,uint _destId,uint8[10] _path) private{
         pathCount++;
         idToPath[pathCount] = path(pathCount,_srcId,_destId,_path);
+
+
+    }
+    function findNext(uint orderId) private{
+        nextLocId[orderId] = nextId[currentlyWithId[orderCount]];
+
+
     }
 
     function demo(){
@@ -113,9 +122,8 @@ contract Production{
         addLoc("bangalore",tempAddress3);
         addLoc("kochi",tempAddress4);
         addLoc("alapuzha",tempAddress5);
-        //create function to ad
-        addPath(1,5,[1,2,3,4,5,0,0,0,0,0]);
         addOrder(1,100,1,2,tempAddress1);
+        addPath(1,1,5,[1,2,3,4,5,0,0,0,0,0]);
 
     }
 
