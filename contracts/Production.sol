@@ -11,6 +11,8 @@ contract Production{
         uint id;
         string name;
         uint price;
+        uint min;
+        uint max;
     }
     struct order{
         uint id;
@@ -72,9 +74,9 @@ contract Production{
     }
 
 
-    function addItem(string _name,uint price,address tempAddress) private{
+    function addItem(string _name,uint price,address tempAddress,uint _min,uint _max) private{
         itemCount++;
-        insToItems[tempAddress] =item(itemCount,_name,price);
+        insToItems[tempAddress] =item(itemCount,_name,price,0,0);
         idToItem[itemCount] = insToItems[tempAddress];
 
     }
@@ -107,10 +109,12 @@ contract Production{
         idToPath[pathCount] = path(pathCount,_srcId,_destId,_path);
     }
 
-    function transferOwnerShip(uint _orderId) public{
+    function transferOwnership(uint _orderId) public{
+        address currentAddress = idToIns[currentlyWithId[_orderId]].accountOwner;
         currentlyWithId[_orderId] = nextLocId[_orderId];
         findNext(_orderId);
         loc location  = idToLoc[currentlyWithId[_orderId]];
+        delete arrivedHere[currentAddress];
         arrivedHere[location.locOwner] = _orderId;
     }
     function findNext(uint orderId) private{
@@ -124,7 +128,7 @@ contract Production{
         addInstitute(2,"warehouse1",tempAddress2);
         addInstitute(2,"warehouse2",tempAddress3);
         addInstitute(2,"warehouse3",tempAddress4);
-        addItem("carrot",100,tempAddress1);
+        addItem("carrot",100,tempAddress1,0,0);
         addLoc("telengana",tempAddress1);
         addLoc("hyderabad",tempAddress2);
         addLoc("bangalore",tempAddress3);
