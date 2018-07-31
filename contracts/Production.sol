@@ -93,6 +93,7 @@ contract Production{
 
     function addLoc(string _locName,address tempAddress) private{
         locCount++;
+
         idToLoc[locCount] =loc(locCount,_locName,tempAddress);
 
     }
@@ -100,13 +101,17 @@ contract Production{
 
     function addPath(uint orderId,uint _srcId,uint _destId,uint8[10] _path) private{
         pathCount++;
+        for(uint i=2;_path[i]!=0;i++){
+            nextId[i-1] =_path[i];
+        }
         idToPath[pathCount] = path(pathCount,_srcId,_destId,_path);
+    }
 
-
+    function transferOwnerShip(uint orderId){
+        uint temp;
     }
     function findNext(uint orderId) private{
         nextLocId[orderId] = nextId[currentlyWithId[orderCount]];
-
 
     }
 
