@@ -51,7 +51,7 @@ contract Production{
     mapping (uint => uint) public nextId;
     mapping (uint => uint) public nextLocId;
     //mapping all the pending delivery to their address they should arrive at and also the status which is a bool
-    mapping (address => uint) arrivedHere;
+    mapping (address => uint) public arrivedHere;
     //counters to store the equvalent id's
     uint public insCount;
     uint public itemCount;
@@ -107,8 +107,11 @@ contract Production{
         idToPath[pathCount] = path(pathCount,_srcId,_destId,_path);
     }
 
-    function transferOwnerShip(uint orderId){
-        uint temp;
+    function transferOwnerShip(uint _orderId){
+        currentlyWithId[_orderId] = nextLocId[_orderId];
+        findNext(_orderId);
+        loc location  = idToLoc[currentlyWithId[_orderId]];
+        arrivedHere[location.locOwner] = _orderId;
     }
     function findNext(uint orderId) private{
         nextLocId[orderId] = nextId[currentlyWithId[orderCount]];

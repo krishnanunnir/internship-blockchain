@@ -56,13 +56,14 @@ App = {
       var namediv = $("#institutionName");
       var itemdiv = $("#candidatesResults");
       var orderdiv = $("#orderValues");
+      var pendingdiv = $("#pendingOrderValues");
       namediv.empty();
       itemdiv.empty();
       orderdiv.empty();
+      var institution;
 
-
-    institutionInstance.ownerToIns(App.account).then(function(institution) {
-
+    institutionInstance.ownerToIns(App.account).then(function(inst) {
+            institution = inst;
             var name = institution[2];
             console.log(name);
             if (name === "" ){
@@ -75,19 +76,40 @@ App = {
                 $("#helpmessage").hide();
                 institutionInstance.insToItems(App.account).then(function(item){
                     console.log("item" + item[2]);
-                    $("#content").show();
+
+                    if(item[0] != 0){
+                        $("#content").show();
+                    }
                     itemdiv.append("<tr><td>"+item[0]+"</td><td>"+item[1]+"</td><td>"+item[2]+"</td></tr>");
 
                 });
                 institutionInstance.producerToOrder(App.account).then(function(order){
 
                     itemId = order[1];
+                    if(order[0] == 0){
+                        orderdiv.hide();
+                    }
                     institutionInstance.idToItem(itemId).then(function(item){
-                        orderdiv.append("<tr><td>"+order[0]+"</td><td>"+item[1]+"</td><td>"+order[2]+"</td><td><button type='button' class='btn btn-primary active' style='display:inline-block'>Track</button></td></tr>");
+                        institutionInstance.currentlyWithId(order[0]).then(function(locId){
+                            institutionInstance.idToLoc(locId).then(function(location){
+                            console.log("item is"+item);
+                            orderdiv.append("<tr><td>"+order[0]+"</td><td>"+item[1]+"</td><td>"+order[2]+"</td><td>"+location[1]+"</td></tr>");
+                            });
+                        });
                     });
-
                 });
             }
+
+    });
+    institutionInstance.arrivedHere(App.account).then(function(orderId){
+        institutionInstance.idToOrder(orderId).then(function(order){
+            itemId = order[1];
+            institutionInstance.idToItem(itemId).then(function(item){
+                institutionInstance.idToIns(order[4]).then(function(dest) {
+                pendingdiv.append("<tr><td>"+order[0]+"</td><td>"+item[1]+"</td><td>"+order[2]+"</td><td>"+dest[2]+"</td><td><button class='btn btn-active'>Mark as Delivered</button></td></tr>");
+            });
+            });
+        });
     });
 
       loader.hide();
