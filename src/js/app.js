@@ -72,6 +72,7 @@ App = {
                 console.log(institution);
                 var institutionTemplate = name;
                 namediv.append(institutionTemplate);
+                $("#helpmessage").hide();
                 institutionInstance.insToItems(App.account).then(function(item){
                     console.log("item" + item[2]);
                     $("#content").show();
