@@ -81,7 +81,7 @@ contract Production{
 
     }
 
-
+    //Function to add order
     function addOrder(uint _itemId,uint quantity,uint src,uint dest,address tempAddress) private{
         orderCount++;
         producerToOrder[tempAddress] = order(orderCount,_itemId,quantity,src,dest);
@@ -92,7 +92,7 @@ contract Production{
 
     }
 
-
+    //Function to add new location
     function addLoc(string _locName,address tempAddress) private{
         locCount++;
 
@@ -110,11 +110,10 @@ contract Production{
     }
 
     function transferOwnership(uint _orderId) public{
-        address currentAddress = idToIns[currentlyWithId[_orderId]].accountOwner;
         currentlyWithId[_orderId] = nextLocId[_orderId];
         findNext(_orderId);
         loc location  = idToLoc[currentlyWithId[_orderId]];
-        delete arrivedHere[currentAddress];
+        delete arrivedHere[msg.sender];
         arrivedHere[location.locOwner] = _orderId;
     }
     function findNext(uint orderId) private{

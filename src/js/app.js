@@ -31,9 +31,9 @@ App = {
       return App.render();
     });
   },
-  changeAddress: function(orderId,address){
+  changeAddress: function(orderId){
       App.contracts.Production.deployed().then(function(instance) {
-          instance.transferOwnership(orderId);
+          instance.transferOwnership(orderId,{from:App.account});
       });
   },
   render: function() {
