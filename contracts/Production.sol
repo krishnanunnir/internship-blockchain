@@ -107,7 +107,7 @@ contract Production{
         idToPath[pathCount] = path(pathCount,_srcId,_destId,_path);
     }
 
-    function transferOwnerShip(uint _orderId){
+    function transferOwnerShip(uint _orderId) public{
         currentlyWithId[_orderId] = nextLocId[_orderId];
         findNext(_orderId);
         loc location  = idToLoc[currentlyWithId[_orderId]];

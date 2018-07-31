@@ -31,7 +31,11 @@ App = {
       return App.render();
     });
   },
-
+  changeAddress: function(orderId){
+      App.contracts.Production.deployed().then(function(instance) {
+          instance.transferOwnerShip(orderId);
+      });
+  },
   render: function() {
     var productionInstance;
     var loader = $("#loader");
@@ -106,13 +110,14 @@ App = {
             itemId = order[1];
             institutionInstance.idToItem(itemId).then(function(item){
                 institutionInstance.idToIns(order[4]).then(function(dest) {
-                pendingdiv.append("<tr><td>"+order[0]+"</td><td>"+item[1]+"</td><td>"+order[2]+"</td><td>"+dest[2]+"</td><td><button class='btn btn-active'>Mark as Delivered</button></td></tr>");
+                pendingdiv.append("<tr><td>"+order[0]+"</td><td>"+item[1]+"</td><td>"+order[2]+"</td><td>"+dest[2]+"</td><td><button class='btn btn-active' onClick='App.changeAddress("+order[0]+")'>Mark as Delivered</button></td></tr>");
             });
             });
         });
     });
 
       loader.hide();
+
     }).catch(function(error) {
       console.warn(error);
     });
